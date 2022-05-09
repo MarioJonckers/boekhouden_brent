@@ -1,0 +1,29 @@
+.main-navigation {
+    grid-area: nav;
+    background: #222d32;
+}
+
+.main-wrapper.main-wrapper--navigation-open {
+    grid-template-columns: 15% minmax(215px, 15%);
+}
+
+.main-wrapper {
+    display: grid;
+    grid-template-areas:
+        "nav content"
+        "nav content";
+    grid-template-rows: 0 auto;
+    height: 100vh;
+}
+
+.main-content {
+    grid-area: content;
+    margin: 20px;
+}
+
+.title {
+    text-align: center;
+    color: #b8c7ce;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}

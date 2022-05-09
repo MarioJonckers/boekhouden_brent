@@ -4,7 +4,8 @@
 }
 
 .main-wrapper.main-wrapper--navigation-open {
-    grid-template-columns: 15% minmax(215px, 15%);
+    // grid-template-columns: 15% minmax(215px, 15%);
+    grid-template-columns: minmax(215px, 15%) 1fr;
 }
 
 .main-wrapper {
@@ -12,6 +13,7 @@
     grid-template-areas:
         "nav content"
         "nav content";
+    grid-template-columns: 0 auto;
     grid-template-rows: 0 auto;
     height: 100vh;
 }

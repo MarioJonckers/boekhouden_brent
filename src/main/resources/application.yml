@@ -1,0 +1,23 @@
+company:
+  name: PARTY Jumpers bvba
+  address: Consciencestraat 8
+  postalCode: 2330
+  city: Merksplas
+  tel: 0494362215
+  email: info@partyjumpers.be
+  fax: 014631027
+
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./companyDataBase
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2

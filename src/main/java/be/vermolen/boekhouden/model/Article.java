@@ -1,5 +1,6 @@
 package be.vermolen.boekhouden.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +14,6 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String root;
 
     private String name;
     @Column(length = 1000)
@@ -31,7 +31,8 @@ public class Article {
 
     private String notes;
 
+    @JsonGetter
     private String getId() {
-        return "ART" + StringUtils.leftPad(id.toString(), 5);
+        return "ART" + StringUtils.leftPad(id.toString(), 5, "0");
     }
 }

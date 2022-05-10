@@ -1,5 +1,6 @@
 package be.vermolen.boekhouden.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,5 +24,6 @@ public enum Salutation {
     FAMILIE("Familie"),
     FIRMA("Firma");
 
+    @JsonValue
     private String name;
 }

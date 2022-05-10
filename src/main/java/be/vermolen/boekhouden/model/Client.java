@@ -1,18 +1,19 @@
 package be.vermolen.boekhouden.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "client")
-public class Client {
+public class Client implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String root;
 
     @Enumerated(value = EnumType.STRING)
     private Salutation salutation;
@@ -23,6 +24,7 @@ public class Client {
 
     @ManyToOne
     @JoinColumn(name = "city_id")
+    @JsonIgnoreProperties({"id"})
     private City city;
 
     private String tel;

@@ -15,6 +15,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { ClientsComponent, NgbdSortableHeader } from './components/clients/clients.component';
+import { ArticlesComponent } from './components/articles/articles.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,9 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     RandomizeUrl,
     NumberArray,
     SortArray,
+    ClientsComponent,
+    ArticlesComponent,
+    NgbdSortableHeader,
   ],
   imports: [
     BrowserModule,

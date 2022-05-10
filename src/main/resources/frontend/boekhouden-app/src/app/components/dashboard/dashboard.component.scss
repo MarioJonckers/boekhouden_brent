@@ -2,3 +2,48 @@ h2 {
     color: #808080;
     font-weight: 400;
 }
+
+.dd {
+    align-self: center;
+}
+
+.years {
+    border: solid 1px grey
+}
+
+.newItem {
+    height: 100px;
+    display: flex;
+}
+.newItemChild {
+    align-self: center;
+}
+
+.hover {
+    padding: 0;
+
+    :hover {
+        background-color: rgba(0, 183, 255);
+    }
+}
+
+.itemBtn {
+    background-color: lightblue;
+    z-index: 999;
+    margin: 5px;
+    text-align: center;
+    padding-top: 1rem;
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor: pointer;
+    border-radius: 8px;
+
+    :hover {
+        background-color: rgba(0, 183, 255, 0.219);
+    }
+}
+
+.itemBtn > p {
+    text-align: center;
+    padding-bottom: 1rem;
+}

@@ -14,55 +14,35 @@ export class AppComponent {
 
   menu = [
     {
-      header: 'Documentation',
+      label: 'Dashboard',
+      route: '/',
+      iconClasses: 'fa fa-tachometer',
     },
     {
-      label: 'Get Started',
-      route: '',
+      header: 'Klanten & Artikels',
+    },
+    {
+      label: 'Klanten',
+      route: '/klanten',
+      iconClasses: 'fa fa-users',
+    },
+    {
+      label: 'Artikels',
+      route: '/artikels',
+      iconClasses: 'fa fa-cube',
+    },
+    {
+      header: 'Documenten',
+    },
+    {
+      label: 'Facturen',
+      route: '/facturen',
       iconClasses: 'fa fa-rocket',
     },
     {
-      label: 'Multilevel',
-      iconClasses: 'fa fa-share',
-      children: [
-        {
-          label: 'Configuration 1',
-          url: '//google.com',
-          badges: [
-            {
-              label: '1',
-              classes: 'badge--red',
-            },
-          ],
-        },
-        {
-          header: 'Separator',
-        },
-        {
-          label: 'Configuration 2',
-          children: [
-            {
-              label: 'Configuration 1',
-              url: '//google.com',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: 'Badges',
-      iconClasses: 'fa fa-star',
-      url: '//google.com',
-      badges: [
-        {
-          label: 'new',
-          classes: 'badge--red',
-        },
-        {
-          label: '1',
-          classes: 'badge--blue',
-        },
-      ],
+      label: 'Offertes',
+      route: '/offertes',
+      iconClasses: 'fa fa-rocket',
     },
   ];
 

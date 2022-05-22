@@ -10,5 +10,5 @@ export class Client extends Object {
   tel: string;
   mobile: string;
   email: string;
-  btnNumber: string;
+  btwNumber: string;
 }

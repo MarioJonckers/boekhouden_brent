@@ -47,10 +47,24 @@ export class SortArray implements PipeTransform {
   transform(items: any[], sortBy?: string): any[] {
     return items.sort((a, b) => {
       if (sortBy) {
-        return a[sortBy] - b[sortBy];
+        if (typeof a[sortBy] === 'string') {
+          return a[sortBy].localeCompare(b[sortBy]);
+        } else {
+          return a[sortBy] - b[sortBy];
+        }
       } else {
         return a - b;
       }
     });
+  }
+}
+@Pipe({ name: 'trim' })
+export class Trim implements PipeTransform {
+  transform(text?: string): string {
+    if (text) {
+      return text.trim();
+    } else {
+      return '';
+    }
   }
 }

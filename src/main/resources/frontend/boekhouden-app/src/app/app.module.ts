@@ -9,6 +9,7 @@ import {
   RandomizeUrl,
   Round,
   SortArray,
+  Trim,
 } from './services/pipes.service';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -17,6 +18,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ClientsComponent, NgbdSortableHeader } from './components/clients/clients.component';
 import { ArticlesComponent } from './components/articles/articles.component';
+import { FormsModule } from '@angular/forms';
+import { UpdateClientComponent } from './components/clients/update-client/update-client.component';
 
 @NgModule({
   declarations: [
@@ -27,9 +30,11 @@ import { ArticlesComponent } from './components/articles/articles.component';
     RandomizeUrl,
     NumberArray,
     SortArray,
+    Trim,
     ClientsComponent,
     ArticlesComponent,
     NgbdSortableHeader,
+    UpdateClientComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,6 +43,7 @@ import { ArticlesComponent } from './components/articles/articles.component';
     SidebarMenuModule,
     BrowserAnimationsModule,
     NgbModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

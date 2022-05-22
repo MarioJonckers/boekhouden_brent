@@ -1,0 +1,233 @@
+<div class="row">
+  <div class="col-10">
+    <h5 class="text-center w-100 mb-2">Klant</h5>
+  </div>
+  <div class="col text-right">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="exit.emit()"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Sluit"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col-2">
+    <label for="id" class="form-label">ID</label>
+    <input
+      type="number"
+      class="form-control"
+      id="id"
+      placeholder="ID"
+      disabled
+      [(ngModel)]="client.id"
+    />
+  </div>
+  <div class="col-3">
+    <label for="salutation" class="form-label">Aanspreking</label>
+    <select
+      class="form-control"
+      id="salutation"
+      [(ngModel)]="client.salutation"
+      [disabled]="salutations.length == 0"
+    >
+      <option [value]="null" style="font-style: italic">n.v.t.</option>
+      <option *ngFor="let salutation of salutations" [value]="salutation">
+        {{ salutation }}
+      </option>
+    </select>
+  </div>
+  <div class="col">
+    <label for="name" class="form-label">Naam</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      placeholder="naam"
+      [(ngModel)]="client.name"
+    />
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col">
+    <label for="address" class="form-label">Adres</label>
+    <input
+      type="text"
+      class="form-control"
+      id="address"
+      placeholder="adres"
+      [(ngModel)]="client.address"
+    />
+  </div>
+  <div class="col">
+    <label for="address2" class="form-label">Adres (vervolg)</label>
+    <input
+      type="text"
+      class="form-control"
+      id="address2"
+      placeholder="adres vervolg"
+      [(ngModel)]="client.address2"
+    />
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col-3">
+    <label for="city.postalCode" class="form-label">Postcode</label>
+    <div class="input-group">
+      <input
+        type="text"
+        class="form-control"
+        id="city.postalCode"
+        placeholder="postcode"
+        [(ngModel)]="client.city.postalCode"
+        [disabled]="
+          filteredCityNames().length == 1 &&
+          filteredCityNames()[0].postalCode == client.city.postalCode
+        "
+        (keyup)="updateCity($event)"
+      />
+      <button
+        *ngIf="
+          filteredCityNames().length == 1 &&
+          filteredCityNames()[0].postalCode == client.city.postalCode
+        "
+        class="btn btn-outline-secondary"
+        type="button"
+        id="closeCountryInput"
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Verwijder"
+        (click)="client.city.postalCode = ''"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+  <div class="col">
+    <label for="city" class="form-label">Gemeente</label>
+    <select
+      class="form-control"
+      id="city"
+      [(ngModel)]="client.city.city"
+      [disabled]="
+        filteredCityNames().length == 1 &&
+        client.city.postalCode == filteredCityNames()[0].postalCode
+      "
+      *ngIf="filteredCityNames().length != 0"
+      (change)="updatePostalCode()"
+    >
+      <option
+        *ngFor="let city of filteredCityNames() | sort: 'city'"
+        [value]="city.city"
+      >
+        {{ city.city }}
+      </option>
+    </select>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Nieuw"
+      [(ngModel)]="client.city.city"
+      *ngIf="filteredCityNames().length == 0"
+    />
+  </div>
+  <div class="col-4">
+    <label for="city.country" class="form-label">Land</label>
+    <select
+      class="form-select form-control"
+      id="city.country"
+      [disabled]="countries.length == 0"
+      (change)="updateCountry($event)"
+      [value]="client.city.country.id"
+      *ngIf="client.city.country.id != '-1'"
+    >
+      <option [value]="-1" style="font-style: italic">
+        <i>Ander land toevoegen</i>
+      </option>
+      <option
+        *ngFor="let country of countries"
+        [value]="country.id"
+        [selected]="country.id == client.city.country.id"
+      >
+        {{ country.name }}
+      </option>
+    </select>
+    <div class="input-group" *ngIf="client.city.country.id == '-1'">
+      <input
+        type="text"
+        [(ngModel)]="client.city.country.name"
+        class="form-control"
+        placeholder="land"
+      />
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        id="closeCountryInput"
+        data-bs-toggle="tooltip"
+        data-bs-placement="top"
+        title="Selecteer uit lijst"
+        (click)="updateCountry('BE')"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col">
+    <label for="tel" class="form-label">Telefoon</label>
+    <input
+      type="tel"
+      class="form-control"
+      id="tel"
+      placeholder="telefoon"
+      [(ngModel)]="client.tel"
+    />
+  </div>
+  <div class="col">
+    <label for="mobile" class="form-label">GSM</label>
+    <input
+      type="tel"
+      class="form-control"
+      id="mobile"
+      placeholder="gsm"
+      [(ngModel)]="client.mobile"
+    />
+  </div>
+</div>
+<div class="row mb-5">
+  <div class="col">
+    <label for="email" class="form-label">E-Mail</label>
+    <input
+      type="text"
+      class="form-control"
+      id="email"
+      placeholder="e-mail"
+      [(ngModel)]="client.email"
+    />
+  </div>
+  <div class="col">
+    <label for="btw" class="form-label">BTW-Nummer</label>
+    <input
+      type="text"
+      class="form-control"
+      id="btw"
+      placeholder="btw nummer"
+      [(ngModel)]="client.btwNumber"
+    />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <button class="btn btn-success w-100" (click)="update.emit(client)">
+      Opslaan
+    </button>
+  </div>
+  <div class="col">
+    <button class="btn btn-danger w-100">Verwijder</button>
+  </div>
+</div>

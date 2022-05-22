@@ -8,7 +8,6 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { City } from 'src/app/classes/City';
 import { Client } from 'src/app/classes/Client';
 import { ClientService } from 'src/app/services/client.service';
 
@@ -53,15 +52,16 @@ export class ClientsComponent implements OnInit {
   @ViewChildren(NgbdSortableHeader) headers!: QueryList<NgbdSortableHeader>;
 
   private originalClients: Client[] = [];
-  clients: Client[] = [];
+  clients?: Client[];
+  search: string = '';
+  selectedClient?: Client;
 
   constructor(private clientService: ClientService) {}
 
   ngOnInit(): void {
     this.clientService.getAll().subscribe((data: any) => {
-      console.log(data);
       this.originalClients = data;
-      this.onSort({ column: 'id', direction: 'asc' });
+      this.onSort({ column: 'name', direction: 'asc' });
     });
   }
 
@@ -84,7 +84,62 @@ export class ClientsComponent implements OnInit {
         const res = v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
         return direction === 'asc' ? res : -res;
       });
-      console.log(this.clients);
+      this.filterClients();
     }
+  }
+
+  filterClients(keyPress?: KeyboardEvent) {
+    let search = this.search;
+    if (
+      keyPress &&
+      keyPress.key &&
+      'abcdefghijklmopqrstuvwxyz'.includes(keyPress.key.toLowerCase())
+    ) {
+      search += keyPress.key;
+      console.log(search);
+    } else if (keyPress && keyPress.key && 'Backspace' == keyPress.key) {
+      if (search && search.length > 0) {
+        search = search.substring(0, search.length - 1);
+      }
+    }
+    this.clients = this.clients?.filter((c: any) => {
+      var values = ['name', 'address', 'address2', 'tel', 'email', 'mobile'];
+      var flag = false;
+
+      values.forEach((val) => {
+        if (c[val] && c[val].toLowerCase().includes(search.toLowerCase())) {
+          flag = true;
+          return;
+        }
+      });
+      if (c.city && c.city.postalCode && c.city.postalCode.includes(search)) {
+        flag = true;
+      }
+      if (c.city && c.city.city && c.city.city.includes(search)) {
+        flag = true;
+      }
+      return flag;
+    });
+  }
+
+  updateClient(updatedClient: Client) {
+    if (this.selectedClient) {
+      let index = this.originalClients.findIndex(
+        (c) => c.id === updatedClient.id
+      );
+      this.originalClients[index] = updatedClient;
+
+      if (this.clients) {
+        index = this.clients.findIndex((c) => c.id === updatedClient.id);
+        this.clients[index] = updatedClient;
+        console.log('qdsqsd');
+      }
+
+      this.selectedClient = undefined;
+    }
+  }
+
+  copy(client: Client): Client {
+    return { ...client };
   }
 }

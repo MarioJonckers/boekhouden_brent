@@ -1,20 +1,71 @@
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col" sortable="id" (sort)="onSort($event)">#</th>
-      <th scope="col" sortable="name" (sort)="onSort($event)">Naam</th>
-      <th scope="col" sortable="address" (sort)="onSort($event)">Adres</th>
-      <th scope="col" sortable="address2" (sort)="onSort($event)">Adres 2</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let client of clients">
-      <th scope="row">{{ client.id }}</th>
-      <td>
-        {{ client.name }}
-      </td>
-      <td>{{ client.address }}</td>
-      <td>{{ client.address2 }}</td>
-    </tr>
-  </tbody>
-</table>
+<h4 class="text-center m-4 mb-5">Klanten</h4>
+
+<div class="container mw-100" *ngIf="clients && clients.length > 0">
+  <div class="form-group row">
+    <input
+      type="text"
+      class="form-control col-3"
+      [(ngModel)]="search"
+      (keydown)="filterClients($event)"
+      placeholder="Filter"
+    />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col scrollableTable">
+    <table
+      class="table table-striped"
+      *ngIf="clients && clients.length > 0; else loading"
+    >
+      <thead>
+        <tr>
+          <th scope="col" sortable="name" (sort)="onSort($event)">Naam</th>
+          <th scope="col" *ngIf="!selectedClient">Adres</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let client of clients"
+          (click)="selectedClient = copy(client)"
+          [class]="{
+            selected: selectedClient && client.id == selectedClient.id
+          }"
+        >
+          <td>
+            <span *ngIf="client.salutation && client.salutation != 'null'">{{
+              client.salutation
+            }}</span>
+            {{ client.name | trim }}
+          </td>
+          <td *ngIf="!selectedClient">
+            <span>{{ client.address | trim }}</span>
+            <span *ngIf="client.address2">, {{ client.address2 | trim }}</span>
+            <span *ngIf="client.address || client.address2">,&nbsp;</span>
+            <span *ngIf="client.city"
+              >{{ client.city.postalCode | trim }}
+              {{ client.city.city | trim }}</span
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col" *ngIf="selectedClient">
+    <app-update-client
+      [client]="selectedClient"
+      (exit)="selectedClient = undefined"
+      (update)="updateClient($event)"
+    ></app-update-client>
+  </div>
+</div>
+
+<ng-template #loading>
+  <h5 *ngIf="clients == null; else empty" class="text-center">
+    De klanten worden opgehaald...
+  </h5>
+</ng-template>
+
+<ng-template #empty>
+  <h5 class="text-center">Geen klanten gevonden.</h5>
+</ng-template>

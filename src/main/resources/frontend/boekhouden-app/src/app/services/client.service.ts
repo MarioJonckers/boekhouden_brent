@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { Client } from '../classes/Client';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +30,11 @@ export class ClientService {
     }
 
     return this.salutations;
+  }
+
+  updateClient(updatedClient: Client): Observable<Client> {
+    return this.http
+      .put<Client>(`${environment.apiUrl}/client`, updatedClient)
+      .pipe(catchError((err) => throwError(err)));
   }
 }

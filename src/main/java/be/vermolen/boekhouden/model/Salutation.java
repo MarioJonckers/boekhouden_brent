@@ -26,4 +26,14 @@ public enum Salutation {
 
     @JsonValue
     private String name;
+
+    public static Salutation convert(String salutationString) {
+        for (Salutation salutation : Salutation.values()) {
+            if (salutation.getName().equals(salutationString)) {
+                return salutation;
+            }
+        }
+
+        return null;
+    }
 }

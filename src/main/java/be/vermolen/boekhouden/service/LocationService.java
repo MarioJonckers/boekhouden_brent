@@ -80,14 +80,19 @@ public class LocationService {
                 newCity = first.get();
             }
         } catch (CityNotFoundException ignore) {
-            if (city.getPostalCode() == null || city.getPostalCode().isBlank() ||
-            city.getCity() == null || city.getCity().isBlank()) {
-                throw new CreateException("stad", "Naam of postcode is leeg.");
+            try {
+                List<City> citiesByCity = getByCity(city.getCity());
+                newCity = citiesByCity.get(0);
+            } catch (CityNotFoundException ignore2) {
+                if (city.getPostalCode() == null || city.getPostalCode().isBlank() ||
+                        city.getCity() == null || city.getCity().isBlank()) {
+                    throw new CreateException("stad", "Naam of postcode is leeg.");
+                }
+                newCity.setPostalCode(trim(city.getPostalCode(), false));
+                newCity.setCity(trim(city.getCity(), true));
+                newCity.setCountry(country);
+                newCity = cityRepository.save(newCity);
             }
-            newCity.setPostalCode(trim(city.getPostalCode(), false));
-            newCity.setCity(trim(city.getCity(), true));
-            newCity.setCountry(country);
-            newCity = cityRepository.save(newCity);
         }
 
         return newCity;

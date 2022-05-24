@@ -47,7 +47,7 @@ public class ClientService {
     private Client updateAndSaveClient(Client original, CreateClientDto client) {
         String salutation = client.getSalutation();
         try {
-            original.setSalutation(Salutation.valueOf(salutation));
+            original.setSalutation(Salutation.convert(salutation));
         } catch (IllegalArgumentException ex) {
             throw new UpdateException("klant", "Aanspreking '" + salutation + "' bestaat niet.");
         } catch (NullPointerException ex) {

@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { Client } from 'src/app/classes/Client';
 import { ClientService } from 'src/app/services/client.service';
+import { ToastService } from 'src/app/toast/toast.service';
 
 export type SortColumn = keyof Client | '';
 export type SortDirection = 'asc' | 'desc' | '';
@@ -51,12 +52,17 @@ export class NgbdSortableHeader {
 export class ClientsComponent implements OnInit {
   @ViewChildren(NgbdSortableHeader) headers!: QueryList<NgbdSortableHeader>;
 
-  private originalClients: Client[] = [];
+  originalClients: Client[] = [];
   clients?: Client[];
   search: string = '';
   selectedClient?: Client;
 
-  constructor(private clientService: ClientService) {}
+  currentSorting: SortEvent = { column: 'name', direction: 'asc' };
+
+  constructor(
+    private clientService: ClientService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.clientService.getAll().subscribe((data: any) => {
@@ -65,7 +71,8 @@ export class ClientsComponent implements OnInit {
     });
   }
 
-  onSort({ column, direction }: SortEvent) {
+  onSort({ column, direction }: SortEvent, keyPress?: KeyboardEvent) {
+    this.currentSorting = { column, direction };
     // resetting other headers
     this.headers.forEach((header) => {
       if (header.sortable !== column) {
@@ -84,7 +91,7 @@ export class ClientsComponent implements OnInit {
         const res = v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
         return direction === 'asc' ? res : -res;
       });
-      this.filterClients();
+      this.filterClients(keyPress);
     }
   }
 
@@ -124,18 +131,25 @@ export class ClientsComponent implements OnInit {
 
   updateClient(updatedClient: Client) {
     if (this.selectedClient) {
-      let index = this.originalClients.findIndex(
-        (c) => c.id === updatedClient.id
+      this.clientService.updateClient(updatedClient).subscribe(
+        (data: Client) => {
+          let index = this.originalClients.findIndex((c) => c.id === data.id);
+          if (index >= 0) {
+            this.originalClients[index] = { ...data };
+
+            if (this.clients) {
+              index = this.clients.findIndex((c) => c.id === data.id);
+              this.clients[index] = { ...data };
+            }
+          }
+
+          this.selectedClient = undefined;
+          this.toastService.show('Klant is opgeslagen.');
+        },
+        (err) => {
+          this.toastService.show(err.error.message, { error: true });
+        }
       );
-      this.originalClients[index] = updatedClient;
-
-      if (this.clients) {
-        index = this.clients.findIndex((c) => c.id === updatedClient.id);
-        this.clients[index] = updatedClient;
-        console.log('qdsqsd');
-      }
-
-      this.selectedClient = undefined;
     }
   }
 

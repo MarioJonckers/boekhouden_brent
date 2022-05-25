@@ -1,0 +1,13 @@
+th[articleSortable], td {
+    cursor: pointer;
+}
+
+.scrollableTable {
+    height: 72vh;
+    overflow-y: scroll;
+}
+
+.selected {
+    background-color: #3e455d !important;
+    color: white;
+}

@@ -20,10 +20,14 @@ import {
   ClientsComponent,
   NgbdSortableHeader,
 } from './components/clients/clients.component';
-import { ArticlesComponent } from './components/articles/articles.component';
+import {
+  ArticlesComponent,
+  NgbdArticleSortableHeader,
+} from './components/articles/articles.component';
 import { FormsModule } from '@angular/forms';
 import { UpdateClientComponent } from './components/clients/update-client/update-client.component';
 import { ToastsContainer } from './toast/toast-container.component';
+import { UpdateArticleComponent } from './components/articles/update-article/update-article.component';
 
 @NgModule({
   declarations: [
@@ -37,9 +41,11 @@ import { ToastsContainer } from './toast/toast-container.component';
     Trim,
     ClientsComponent,
     ArticlesComponent,
+    NgbdArticleSortableHeader,
     NgbdSortableHeader,
     UpdateClientComponent,
     ToastsContainer,
+    UpdateArticleComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,8 +1,11 @@
 package be.vermolen.boekhouden.controller;
 
 import be.vermolen.boekhouden.model.Article;
+import be.vermolen.boekhouden.model.Category;
+import be.vermolen.boekhouden.model.Unit;
 import be.vermolen.boekhouden.model.dto.CreateArticleDto;
 import be.vermolen.boekhouden.service.ArticleService;
+import be.vermolen.boekhouden.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +17,7 @@ import java.util.List;
 public class ArticleController {
 
     private final ArticleService articleService;
+    private final CategoryService categoryService;
 
     @GetMapping
     public List<Article> getAll() {
@@ -40,4 +44,12 @@ public class ArticleController {
     public Article create(@RequestBody CreateArticleDto article) {
         return articleService.create(article);
     }
+
+    @GetMapping("/categories")
+    public List<Category> getAllCategories() {
+        return categoryService.getAll();
+    }
+
+    @GetMapping("/units")
+    public Unit[] getAllUnits() { return Unit.values(); }
 }

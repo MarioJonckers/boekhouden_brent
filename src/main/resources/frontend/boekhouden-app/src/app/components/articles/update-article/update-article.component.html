@@ -1,0 +1,131 @@
+<div class="row">
+  <div class="col-10">
+    <h5 class="text-center w-100 mb-2">Product</h5>
+  </div>
+  <div class="col text-right">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="exit.emit()"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Sluit"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col-3">
+    <label for="id" class="form-label">ID</label>
+    <input
+      type="text"
+      class="form-control"
+      id="id"
+      placeholder="ID"
+      disabled
+      [value]="article.id"
+    />
+  </div>
+  <div class="col">
+    <label for="name" class="form-label">Naam</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      placeholder="naam"
+      [(ngModel)]="article.name"
+    />
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col">
+    <label for="category" class="form-label">Categorie</label>
+    <select
+      class="form-control"
+      id="category"
+      [(ngModel)]="article.category.id"
+      [disabled]="!categories"
+      *ngIf="categories"
+      (change)="updateCategory()"
+    >
+      <option style="font-style: italic" [value]="-1">Geen categorie</option>
+      <option
+        *ngFor="let category of categories | sort: 'name'"
+        [value]="category.id"
+      >
+        {{ category.name }}
+      </option>
+    </select>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col-4">
+    <label for="price" class="form-label">Prijs</label>
+    <div class="input-group">
+      <span class="input-group-text" id="basic-addon1">&euro;</span>
+      <input
+        id="price"
+        type="number"
+        step=".5"
+        class="form-control"
+        [(ngModel)]="article.price"
+      />
+    </div>
+  </div>
+  <div class="col-4">
+    <label for="unit" class="form-label">Eenheid</label>
+    <select
+      *ngIf="units"
+      id="unit"
+      class="form-control"
+      [(ngModel)]="article.unit"
+    >
+      <option style="font-style: italic" [value]="null">N/A</option>
+      <option *ngFor="let unit of units" [value]="unit">
+        {{ unit }}
+      </option>
+    </select>
+  </div>
+  <div class="col-4">
+    <label for="btw" class="form-label">Btw %</label>
+    <select id="btw" class="form-control" [(ngModel)]="article.btwPercentage">
+      <option style="font-style: italic" [value]="null">N/A</option>
+      <option *ngFor="let btwP of btwPercentages" [value]="btwP">
+        {{ btwP / 100 | percent }}
+      </option>
+    </select>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col-8">
+    <label for="description" class="form-label">Omschrijving</label>
+    <textarea
+      class="form-control"
+      id="description"
+      placeholder="omschrijving"
+      [rows]="5"
+      [(ngModel)]="article.description"
+    ></textarea>
+  </div>
+  <div class="col">
+    <label for="notes" class="form-label">Notities</label>
+    <textarea
+      class="form-control"
+      id="notes"
+      placeholder="notities"
+      [rows]="5"
+      [(ngModel)]="article.notes"
+    ></textarea>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <button hidden class="btn btn-danger w-100">Verwijder</button>
+  </div>
+  <div class="col">
+    <button class="btn btn-success w-100" (click)="update.emit(article)">
+      Opslaan
+    </button>
+  </div>
+</div>

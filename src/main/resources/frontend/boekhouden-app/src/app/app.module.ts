@@ -28,6 +28,7 @@ import { FormsModule } from '@angular/forms';
 import { UpdateClientComponent } from './components/clients/update-client/update-client.component';
 import { ToastsContainer } from './toast/toast-container.component';
 import { UpdateArticleComponent } from './components/articles/update-article/update-article.component';
+import { InvoiceComponent } from './components/invoice/invoice.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { UpdateArticleComponent } from './components/articles/update-article/upd
     UpdateClientComponent,
     ToastsContainer,
     UpdateArticleComponent,
+    InvoiceComponent,
   ],
   imports: [
     BrowserModule,

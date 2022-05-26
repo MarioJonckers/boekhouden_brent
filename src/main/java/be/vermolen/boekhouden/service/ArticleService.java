@@ -1,6 +1,7 @@
 package be.vermolen.boekhouden.service;
 
 import be.vermolen.boekhouden.exception.ArticleNotFoundException;
+import be.vermolen.boekhouden.exception.CreateException;
 import be.vermolen.boekhouden.exception.UpdateException;
 import be.vermolen.boekhouden.model.Article;
 import be.vermolen.boekhouden.model.Category;
@@ -48,9 +49,13 @@ public class ArticleService {
     }
 
     private Article updateAndSaveArticle(Article original, CreateArticleDto article) {
+        if (article.getName() == null || article.getName().isBlank()) {
+            throw new CreateException("product", "Naam mag niet leeg zijn.");
+        }
+
         String unit = article.getUnit();
         try {
-            original.setUnit(Unit.valueOf(unit));
+            original.setUnit(Unit.compare(unit));
         } catch (IllegalArgumentException ex) {
             throw new UpdateException("artikel", "Unit '" + unit + "' bestaat niet.");
         } catch (NullPointerException ex) {
@@ -59,14 +64,15 @@ public class ArticleService {
 
         original.setName(trim(article.getName(), true));
         Category category = article.getCategory();
-        if (category.getId() == null || category.getId() == -1L) {
-            original.setCategory(categoryService.create(category));
+        if (category == null || category.getId() == null || category.getId() == -1L) {
+            original.setCategory(null);
         } else {
             original.setCategory(category);
         }
 
         original.setPrice(article.getPrice());
         original.setBtwPercentage(article.getBtwPercentage());
+        original.setDescription(article.getDescription());
         original.setNotes(article.getNotes());
 
         return articleRepository.save(original);

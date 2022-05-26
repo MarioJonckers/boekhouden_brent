@@ -7,6 +7,6 @@ export class Article {
     category: Category;
     price: number;
     btwPercentage: number;
-    unit: string;
+    unit: string | null;
     notes: string;
 }

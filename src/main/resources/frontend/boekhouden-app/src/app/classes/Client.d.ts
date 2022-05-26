@@ -2,7 +2,7 @@ import { City } from './City';
 
 export class Client extends Object {
   id: number;
-  salutation: string;
+  salutation: string | null;
   name: string;
   address: string;
   address2: string;

@@ -37,4 +37,10 @@ export class ClientService {
       .put<Client>(`${environment.apiUrl}/client`, updatedClient)
       .pipe(catchError((err) => throwError(err)));
   }
+
+  createClient(updatedClient: Client): Observable<Client> {
+    return this.http
+      .post<Client>(`${environment.apiUrl}/client`, updatedClient)
+      .pipe(catchError((err) => throwError(err)));
+  }
 }

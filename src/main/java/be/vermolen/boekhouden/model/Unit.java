@@ -15,4 +15,18 @@ public enum Unit {
 
     @JsonValue
     private String name;
+
+    public static Unit compare(String name) {
+        if (name == null) {
+            throw new NullPointerException();
+        }
+
+        for(Unit unit : Unit.values()) {
+            if (unit.getName().equals(name)) {
+                return unit;
+            }
+        }
+
+        throw new IllegalArgumentException();
+    }
 }

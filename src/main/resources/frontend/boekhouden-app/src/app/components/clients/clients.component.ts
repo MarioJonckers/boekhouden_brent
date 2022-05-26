@@ -56,6 +56,25 @@ export class ClientsComponent implements OnInit {
   clients?: Client[];
   search: string = '';
   selectedClient?: Client;
+  emptyClient: Client = {
+    id: -1,
+    salutation: null,
+    name: '',
+    address: '',
+    address2: '',
+    city: {
+      postalCode: '',
+      city: '',
+      country: {
+        id: 'BE',
+        name: '',
+      },
+    },
+    btwNumber: '',
+    email: '',
+    mobile: '',
+    tel: '',
+  };
 
   currentSorting: SortEvent = { column: 'name', direction: 'asc' };
 
@@ -87,6 +106,12 @@ export class ClientsComponent implements OnInit {
       this.clients = [...this.originalClients].sort((a, b) => {
         let v1 = a[column];
         let v2 = b[column];
+        if (!v1) {
+          v1 = '';
+        }
+        if (!v2) {
+          v2 = '';
+        }
 
         const res = v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
         return direction === 'asc' ? res : -res;
@@ -131,29 +156,53 @@ export class ClientsComponent implements OnInit {
 
   updateClient(updatedClient: Client) {
     if (this.selectedClient) {
-      this.clientService.updateClient(updatedClient).subscribe(
-        (data: Client) => {
-          let index = this.originalClients.findIndex((c) => c.id === data.id);
-          if (index >= 0) {
-            this.originalClients[index] = { ...data };
-
-            if (this.clients) {
-              index = this.clients.findIndex((c) => c.id === data.id);
-              this.clients[index] = { ...data };
-            }
+      if (this.selectedClient.id == -1) {
+        this.clientService.createClient(updatedClient).subscribe(
+          (data: Client) => {
+            this.handleResponse(data);
+            this.onSort(this.currentSorting);
+          },
+          (err) => {
+            this.toastService.show(err.error.message, { error: true });
           }
-
-          this.selectedClient = undefined;
-          this.toastService.show('Klant is opgeslagen.');
-        },
-        (err) => {
-          this.toastService.show(err.error.message, { error: true });
-        }
-      );
+        );
+      } else {
+        this.clientService.updateClient(updatedClient).subscribe(
+          (data: Client) => {
+            this.handleResponse(data);
+          },
+          (err) => {
+            this.toastService.show(err.error.message, { error: true });
+          }
+        );
+      }
     }
   }
 
+  handleResponse(data: Client) {
+    let index = this.originalClients.findIndex((c) => c.id === data.id);
+    if (index >= 0) {
+      this.originalClients[index] = { ...data };
+
+      if (this.clients) {
+        index = this.clients.findIndex((c) => c.id === data.id);
+        this.clients[index] = { ...data };
+      }
+    } else {
+      this.originalClients.push(data);
+      if (this.clients) {
+        this.clients.push(data);
+      }
+    }
+
+    this.selectedClient = undefined;
+    this.toastService.show('Klant is opgeslagen.');
+  }
+
   copy(client: Client): Client {
+    if (client.id === this.selectedClient?.id) {
+      this.selectedClient = undefined;
+    }
     return { ...client };
   }
 }

@@ -1,17 +1,22 @@
 <h4 class="text-center m-4 mb-5">Producten</h4>
 
-<div
-  class="container mw-100"
-  *ngIf="articles && originalArticles && originalArticles.length > 0"
->
+<div class="container mw-100">
   <div class="form-group row">
     <input
       type="text"
+      *ngIf="articles && originalArticles && originalArticles.length > 0"
       class="form-control col-3"
       [(ngModel)]="search"
       (keydown)="onSort(currentSorting, $event)"
       placeholder="Filter"
     />
+    <div class="col"></div>
+    <button
+      class="col-2 btn btn-success mr-3"
+      (click)="selectedArticle = copy(emptyArticle)"
+    >
+      Nieuw product
+    </button>
   </div>
 </div>
 
@@ -104,10 +109,10 @@
 
 <ng-template #loading>
   <h5 *ngIf="articles == null; else empty" class="text-center">
-    De klanten worden opgehaald...
+    De producten worden opgehaald...
   </h5>
 </ng-template>
 
 <ng-template #empty>
-  <h5 class="text-center">Geen klanten gevonden.</h5>
+  <h5 class="text-center">Geen producten gevonden.</h5>
 </ng-template>

@@ -27,6 +27,12 @@ export class ArticleService {
       .pipe(catchError((err) => throwError(err)));
   }
 
+  createArticle(updatedArticle: Article): Observable<Article> {
+    return this.http
+      .post<Article>(`${environment.apiUrl}/article`, updatedArticle)
+      .pipe(catchError((err) => throwError(err)));
+  }
+
   async getAllCategories(): Promise<Category[]> {
     if (!this.categories) {
       let promise = await this.http

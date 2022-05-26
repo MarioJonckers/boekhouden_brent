@@ -19,7 +19,7 @@ export class AppComponent {
       iconClasses: 'fa fa-tachometer',
     },
     {
-      header: 'Klanten & Artikels',
+      header: 'Klanten & Producten',
     },
     {
       label: 'Klanten',
@@ -27,8 +27,8 @@ export class AppComponent {
       iconClasses: 'fa fa-users',
     },
     {
-      label: 'Artikels',
-      route: '/artikels',
+      label: 'Producten',
+      route: '/producten',
       iconClasses: 'fa fa-cube',
     },
     {
@@ -37,7 +37,7 @@ export class AppComponent {
     {
       label: 'Facturen',
       route: '/facturen',
-      iconClasses: 'fa fa-rocket',
+      iconClasses: 'bi bi-file-earmark-ruled',
     },
     {
       label: 'Offertes',

@@ -62,6 +62,20 @@ export class ArticlesComponent implements OnInit {
   search: string = '';
   selectedArticle?: Article;
 
+  emptyArticle: Article = {
+    id: -1,
+    name: '',
+    description: '',
+    category: {
+      id: -1,
+      name: '',
+    },
+    price: 0,
+    btwPercentage: 21,
+    unit: null,
+    notes: '',
+  };
+
   // regex = /\n/g;
   currentSorting: ArticleSortEvent = { column: 'name', direction: 'asc' };
 
@@ -101,6 +115,12 @@ export class ArticlesComponent implements OnInit {
       this.articles = [...this.originalArticles].sort((a, b) => {
         let v1 = a[column];
         let v2 = b[column];
+        if (!v1) {
+          v1 = '';
+        }
+        if (!v2) {
+          v2 = '';
+        }
 
         const res = v1 < v2 ? -1 : v1 > v2 ? 1 : 0;
         return direction === 'asc' ? res : -res;
@@ -145,25 +165,48 @@ export class ArticlesComponent implements OnInit {
 
   updateArticle(updatedArticle: Article) {
     if (this.selectedArticle) {
-      this.articleService.updateArticle(updatedArticle).subscribe(
-        (data: Article) => {
-          let index = this.originalArticles.findIndex((c) => c.id === data.id);
-          if (index >= 0) {
-            this.originalArticles[index] = { ...data };
-
-            if (this.articles) {
-              index = this.articles.findIndex((c) => c.id === data.id);
-              this.articles[index] = { ...data };
-            }
+      if (this.selectedArticle.id == -1) {
+        this.articleService.createArticle(updatedArticle).subscribe(
+          (data: Article) => {
+            this.handleResponse(data);
+            this.onSort(this.currentSorting);
+          },
+          (err) => {
+            this.toastService.show(err.error.message, { error: true });
           }
+        );
+      } else {
+        this.articleService.updateArticle(updatedArticle).subscribe(
+          (data: Article) => {
+            this.handleResponse(data);
+          },
+          (err) => {
+            this.toastService.show(err.error.message, { error: true });
+          }
+        );
+      }
+    }
+  }
 
-          this.selectedArticle = undefined;
-          this.toastService.show('Klant is opgeslagen.');
-        },
-        (err) => {
-          this.toastService.show(err.error.message, { error: true });
+  handleResponse(data: Article) {
+    if (this.selectedArticle) {
+      let index = this.originalArticles.findIndex((c) => c.id === data.id);
+      if (index >= 0) {
+        this.originalArticles[index] = { ...data };
+
+        if (this.articles) {
+          index = this.articles.findIndex((c) => c.id === data.id);
+          this.articles[index] = { ...data };
         }
-      );
+      } else {
+        this.originalArticles.push(data);
+        if (this.articles) {
+          this.articles.push(data);
+        }
+      }
+
+      this.selectedArticle = undefined;
+      this.toastService.show('Product is opgeslagen.');
     }
   }
 

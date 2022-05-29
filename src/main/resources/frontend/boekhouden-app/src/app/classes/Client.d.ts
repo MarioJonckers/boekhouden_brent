@@ -1,6 +1,6 @@
 import { City } from './City';
 
-export class Client extends Object {
+export class Client {
   id: number;
   salutation: string | null;
   name: string;

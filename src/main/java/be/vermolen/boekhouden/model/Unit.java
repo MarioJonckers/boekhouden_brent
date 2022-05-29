@@ -7,10 +7,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Unit {
-    LM("LM"),
-    M2("M²"),
-    SK("SK"),
     ST("Stuk"),
+    DAG("Dag"),
+    MAAND("Maand"),
     UUR("Uur");
 
     @JsonValue

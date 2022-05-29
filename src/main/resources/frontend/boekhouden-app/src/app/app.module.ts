@@ -29,6 +29,7 @@ import { UpdateClientComponent } from './components/clients/update-client/update
 import { ToastsContainer } from './toast/toast-container.component';
 import { UpdateArticleComponent } from './components/articles/update-article/update-article.component';
 import { InvoiceComponent } from './components/invoice/invoice.component';
+import { UpdateInvoiceComponent } from './components/invoice/update-invoice/update-invoice.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { InvoiceComponent } from './components/invoice/invoice.component';
     ToastsContainer,
     UpdateArticleComponent,
     InvoiceComponent,
+    UpdateInvoiceComponent,
   ],
   imports: [
     BrowserModule,

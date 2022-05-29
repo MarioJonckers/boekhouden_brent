@@ -33,6 +33,22 @@ export class ArticleService {
       .pipe(catchError((err) => throwError(err)));
   }
 
+  async createCategory(category: string): Promise<Category> {
+    let promise = await this.http
+      .post<Category>(`${environment.apiUrl}/article/categories`, {
+        id: -1,
+        name: category,
+      })
+      .pipe(catchError((err) => throwError(err)))
+      .toPromise();
+
+    if (this.categories) {
+      this.categories.push(promise);
+    }
+
+    return promise;
+  }
+
   async getAllCategories(): Promise<Category[]> {
     if (!this.categories) {
       let promise = await this.http

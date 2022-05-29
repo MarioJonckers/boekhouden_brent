@@ -1,118 +1,170 @@
-<h4 class="text-center m-4 mb-5">Producten</h4>
+<h4 class="text-center m-3 mb-4">Producten</h4>
 
 <div class="container mw-100">
-  <div class="form-group row">
-    <input
-      type="text"
-      *ngIf="articles && originalArticles && originalArticles.length > 0"
-      class="form-control col-3"
-      [(ngModel)]="search"
-      (keydown)="onSort(currentSorting, $event)"
-      placeholder="Filter"
-    />
-    <div class="col"></div>
-    <button
-      class="col-2 btn btn-success mr-3"
-      (click)="selectedArticle = copy(emptyArticle)"
-    >
-      Nieuw product
-    </button>
+  <div class="row">
+    <div class="col-3">
+      <input
+        type="text"
+        *ngIf="articles && originalArticles && originalArticles.length > 0"
+        class="form-control"
+        [(ngModel)]="search"
+        (keydown)="onSort(currentSorting, $event)"
+        placeholder="Filter"
+      />
+    </div>
+    <div class="col-4"></div>
+    <div class="col-2">
+      <button
+        class="btn btn-success w-100"
+        type="button"
+        (click)="open(content)"
+      >
+        Nieuwe categorie
+      </button>
+    </div>
+    <div class="col-2">
+      <button
+        class="btn btn-success w-100"
+        (click)="selectedArticle = copy(emptyArticle)"
+      >
+        Nieuw product
+      </button>
+    </div>
   </div>
+
+  <div class="row">
+    <div class="col scrollableTable">
+      <table
+        class="table table-striped"
+        *ngIf="articles && articles.length > 0; else loading"
+      >
+        <thead>
+          <tr>
+            <th scope="col" articleSortable="name" (sort)="onSort($event)">
+              Naam
+              <i
+                *ngIf="
+                  currentSorting &&
+                  currentSorting.column == 'name' &&
+                  currentSorting.direction == 'asc'
+                "
+                class="bi bi-sort-alpha-down"
+              ></i>
+              <i
+                *ngIf="
+                  currentSorting &&
+                  currentSorting.column == 'name' &&
+                  currentSorting.direction == 'desc'
+                "
+                class="bi bi-sort-alpha-up-alt"
+              ></i>
+            </th>
+            <th scope="col" articleSortable="price" (sort)="onSort($event)">
+              Prijs
+              <i
+                *ngIf="
+                  currentSorting &&
+                  currentSorting.column == 'price' &&
+                  currentSorting.direction == 'asc'
+                "
+                class="bi bi-sort-numeric-down"
+              ></i>
+              <i
+                *ngIf="
+                  currentSorting &&
+                  currentSorting.column == 'price' &&
+                  currentSorting.direction == 'desc'
+                "
+                class="bi bi-sort-numeric-up-alt"
+              ></i>
+            </th>
+            <th scope="col">Eenheid</th>
+            <th scope="col" *ngIf="!selectedArticle">Btw %</th>
+            <th scope="col" *ngIf="!selectedArticle">Categorie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let article of articles"
+            (click)="selectedArticle = copy(article)"
+            [class]="{
+              selected: selectedArticle && article.id == selectedArticle.id
+            }"
+          >
+            <td>
+              {{ article.name | trim }}
+            </td>
+            <td>
+              {{ article.price | currency: "€ " }}
+            </td>
+            <td>
+              {{ article.unit }}
+            </td>
+            <td *ngIf="!selectedArticle">
+              {{ article.btwPercentage / 100 | percent }}
+            </td>
+            <td *ngIf="!selectedArticle">
+              <span *ngIf="article.category">{{ article.category.name }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col" *ngIf="selectedArticle">
+      <app-update-article
+        [article]="selectedArticle"
+        (exit)="selectedArticle = undefined"
+        (update)="updateArticle($event)"
+      ></app-update-article>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <h5 *ngIf="articles == null; else empty" class="text-center">
+      De producten worden opgehaald...
+    </h5>
+  </ng-template>
+
+  <ng-template #empty>
+    <h5 class="text-center">Geen producten gevonden.</h5>
+  </ng-template>
+
+  <!-- NewCategory Modal -->
+  <ng-template #content let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Nieuwe categorie</h4>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="mb-3">
+          <label for="name">Naam</label>
+          <input
+            id="dateOfBirth"
+            type="text"
+            [(ngModel)]="newCategory"
+            class="form-control"
+            placeholder="categorie"
+            name="name"
+          />
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="saveCategory(); modal.close('Save click')"
+      >
+        Opslaan
+      </button>
+    </div>
+  </ng-template>
 </div>
-
-<div class="row">
-  <div class="col scrollableTable">
-    <table
-      class="table table-striped"
-      *ngIf="articles && articles.length > 0; else loading"
-    >
-      <thead>
-        <tr>
-          <th scope="col" articleSortable="name" (sort)="onSort($event)">
-            Naam
-            <i
-              *ngIf="
-                currentSorting &&
-                currentSorting.column == 'name' &&
-                currentSorting.direction == 'asc'
-              "
-              class="bi bi-sort-alpha-down"
-            ></i>
-            <i
-              *ngIf="
-                currentSorting &&
-                currentSorting.column == 'name' &&
-                currentSorting.direction == 'desc'
-              "
-              class="bi bi-sort-alpha-up-alt"
-            ></i>
-          </th>
-          <th scope="col" articleSortable="price" (sort)="onSort($event)">
-            Prijs
-            <i
-              *ngIf="
-                currentSorting &&
-                currentSorting.column == 'price' &&
-                currentSorting.direction == 'asc'
-              "
-              class="bi bi-sort-numeric-down"
-            ></i>
-            <i
-              *ngIf="
-                currentSorting &&
-                currentSorting.column == 'price' &&
-                currentSorting.direction == 'desc'
-              "
-              class="bi bi-sort-numeric-up-alt"
-            ></i>
-          </th>
-          <th scope="col">Eenheid</th>
-          <th scope="col" *ngIf="!selectedArticle">Btw %</th>
-          <th scope="col" *ngIf="!selectedArticle">Categorie</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let article of articles"
-          (click)="selectedArticle = copy(article)"
-          [class]="{
-            selected: selectedArticle && article.id == selectedArticle.id
-          }"
-        >
-          <td>
-            {{ article.name | trim }}
-          </td>
-          <td>
-            {{ article.price | currency: "EUR" }}
-          </td>
-          <td>
-            {{ article.unit }}
-          </td>
-          <td *ngIf="!selectedArticle">
-            {{ article.btwPercentage / 100 | percent }}
-          </td>
-          <td *ngIf="!selectedArticle">
-            <span *ngIf="article.category">{{ article.category.name }}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="col" *ngIf="selectedArticle">
-    <app-update-article
-      [article]="selectedArticle"
-      (exit)="selectedArticle = undefined"
-      (update)="updateArticle($event)"
-    ></app-update-article>
-  </div>
-</div>
-
-<ng-template #loading>
-  <h5 *ngIf="articles == null; else empty" class="text-center">
-    De producten worden opgehaald...
-  </h5>
-</ng-template>
-
-<ng-template #empty>
-  <h5 class="text-center">Geen producten gevonden.</h5>
-</ng-template>

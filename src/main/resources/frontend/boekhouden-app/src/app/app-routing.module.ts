@@ -4,6 +4,7 @@ import { ArticlesComponent } from './components/articles/articles.component';
 import { ClientsComponent } from './components/clients/clients.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { InvoiceComponent } from './components/invoice/invoice.component';
+import { UpdateInvoiceComponent } from './components/invoice/update-invoice/update-invoice.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path: 'facturen',
     component: InvoiceComponent,
+  },
+  {
+    path: 'facturen/:id',
+    component: UpdateInvoiceComponent,
   },
   {
     path: '',

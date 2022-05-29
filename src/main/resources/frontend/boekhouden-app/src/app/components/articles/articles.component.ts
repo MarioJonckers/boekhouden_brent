@@ -8,8 +8,8 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Article } from 'src/app/classes/Article';
-import { Category } from 'src/app/classes/Category';
 import { ArticleService } from 'src/app/services/article.service';
 import { ToastService } from 'src/app/toast/toast.service';
 
@@ -61,6 +61,7 @@ export class ArticlesComponent implements OnInit {
   articles?: Article[];
   search: string = '';
   selectedArticle?: Article;
+  newCategory: string = '';
 
   emptyArticle: Article = {
     id: -1,
@@ -81,7 +82,8 @@ export class ArticlesComponent implements OnInit {
 
   constructor(
     private articleService: ArticleService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -215,5 +217,15 @@ export class ArticlesComponent implements OnInit {
       return undefined;
     }
     return { ...article };
+  }
+
+  saveCategory() {
+    this.articleService.createCategory(this.newCategory).then(() => {
+      this.newCategory = '';
+    });
+  }
+
+  open(content: any) {
+    this.modalService.open(content).result;
   }
 }

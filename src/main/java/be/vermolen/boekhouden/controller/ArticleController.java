@@ -50,6 +50,11 @@ public class ArticleController {
         return categoryService.getAll();
     }
 
+    @PostMapping("/categories")
+    public Category createCategory(@RequestBody Category category) {
+        return categoryService.create(category);
+    }
+
     @GetMapping("/units")
     public Unit[] getAllUnits() { return Unit.values(); }
 }

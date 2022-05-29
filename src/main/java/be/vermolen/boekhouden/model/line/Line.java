@@ -12,7 +12,7 @@ import javax.persistence.*;
 @DiscriminatorColumn(name = "line_type",
         discriminatorType = DiscriminatorType.STRING, length = 4)
 @DiscriminatorValue("CSTM")
-public class Line {
+public class  Line {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

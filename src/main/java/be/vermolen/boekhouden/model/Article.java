@@ -1,6 +1,7 @@
 package be.vermolen.boekhouden.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,5 +35,10 @@ public class Article {
     @JsonGetter
     private String getId() {
         return "ART" + StringUtils.leftPad(id.toString(), 5, "0");
+    }
+
+    @JsonSetter
+    private void setId(String id) {
+        this.id = Long.valueOf(id.replace("ART", ""));
     }
 }

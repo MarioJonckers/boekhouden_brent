@@ -11,10 +11,58 @@
       placeholder="Filter"
     />
     <div class="col"></div>
-    <button class="col-2 btn btn-success mr-3" (click)="createInvoice()">
+    <button class="col-2 btn btn-success mr-3" [routerLink]="['nieuw']">
       Nieuwe factuur
     </button>
   </div>
 </div>
 
-<p>Lijst van</p>
+<div class="row fw-bold mt-4 pb-2 border-bottom border-1">
+  <div class="col">Factuur #</div>
+  <div class="col">Klant</div>
+  <div class="col">Factuurdatum</div>
+  <div class="col">Vervaldatum</div>
+  <div class="col">Totaal excl. btw</div>
+  <div class="col">Totaal incl. btw</div>
+  <div class="col"></div>
+</div>
+<div
+  class="row my-2 border-bottom border-1"
+  *ngFor="let invoice of invoices | sort: 'id'"
+>
+  <div class="col">
+    <p>{{ invoice.id }}</p>
+  </div>
+  <div class="col">
+    <p>{{ invoice.client?.name }}</p>
+  </div>
+  <div class="col">
+    <p>{{ invoice.docDate | date: "dd MMM yyyy" }}</p>
+  </div>
+  <div class="col">
+    <p>{{ invoice.expireDate | date: "dd MMM yyyy" }}</p>
+  </div>
+  <div class="col">
+    <p>{{ calculateTotalExBtw(invoice) | currency: "€ " }}</p>
+  </div>
+  <div class="col">
+    <p>{{ calculateTotalInclBtw(invoice) | currency: "€ " }}</p>
+  </div>
+  <div class="col">
+    <div class="row">
+      <div class="col-auto">
+        <button
+          class="btn btn-info py-0 w-100"
+          [routerLink]="['/facturen/' + invoice.id]"
+        >
+          <i class="bi bi-eye"></i>
+        </button>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-info py-0 w-100">
+          <i class="bi bi-printer"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

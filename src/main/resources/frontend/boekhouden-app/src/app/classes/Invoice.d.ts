@@ -2,7 +2,7 @@ import { Client } from "./Client";
 import { InvoiceLine } from "./InvoiceLine";
 
 export class Invoice {
-  id: number;
+  id: string;
   docDate: Date;
   expireDate: Date;
   client: Client | null;

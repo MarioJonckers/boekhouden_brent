@@ -12,6 +12,7 @@ import { InvoiceLine } from 'src/app/classes/InvoiceLine';
 import { ArticleService } from 'src/app/services/article.service';
 import { ClientService } from 'src/app/services/client.service';
 import { InvoiceService } from 'src/app/services/invoice.service';
+import { ToastService } from 'src/app/toast/toast.service';
 
 @Injectable()
 export class CustomAdapter extends NgbDateAdapter<Date> {
@@ -46,7 +47,8 @@ export class UpdateInvoiceComponent implements OnInit {
     private invoiceService: InvoiceService,
     private clientService: ClientService,
     private articleService: ArticleService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private toastService: ToastService
   ) {}
 
   articles: Article[] = [];
@@ -55,13 +57,19 @@ export class UpdateInvoiceComponent implements OnInit {
   selectedClient: Client | null = null;
 
   invoice: Invoice = {
-    id: -1,
+    id: 'NIEUWE FCTR',
     client: null,
     docDate: new Date(),
     expireDate: new Date(),
     lines: [],
     notes: '',
-    paymentMethod: '',
+    paymentMethod: 'FCTR',
+  };
+
+  paymentMethods: { [key: string]: number } = {
+    FCTR: 30,
+    FCT: 15,
+    FCTR_6: 60,
   };
 
   selectedLine: InvoiceLine | null = null;
@@ -73,11 +81,26 @@ export class UpdateInvoiceComponent implements OnInit {
     amount: 0,
     discountPercentage: 0,
   };
+  selectedArticleId = -1;
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       if (params.id) {
         console.log(params.id);
+        if (params.id != 'nieuw') {
+          this.invoiceService.get(params.id).subscribe(
+            (data: Invoice) => {
+              data.docDate = new Date(data.docDate);
+              data.expireDate = new Date(data.expireDate);
+              this.selectedClientId = data.client ? data.client.id : -1;
+              this.invoice = data;
+            },
+            (err) => {
+              this.toastService.show(err.error.message, { error: true });
+              this.router.navigate(['facturen']);
+            }
+          );
+        }
       } else {
         this.router.navigate(['/facturen']);
       }
@@ -95,25 +118,6 @@ export class UpdateInvoiceComponent implements OnInit {
     this.articleService.getAll().subscribe(
       (articles) => {
         this.articles = articles;
-        //TODO remove
-        this.invoice.lines.push({
-          id: 1,
-          customArticleDescription: null,
-          orderInDocument: 1,
-          customArticlePrice: 1,
-          article: this.articles[0],
-          amount: 1,
-          discountPercentage: 0,
-        });
-        this.invoice.lines.push({
-          id: 2,
-          customArticleDescription: 'Custom desc',
-          orderInDocument: 0,
-          customArticlePrice: null,
-          article: this.articles[1],
-          amount: 2,
-          discountPercentage: 25,
-        });
       },
       (err) => {
         console.log(err.error.message);
@@ -129,7 +133,6 @@ export class UpdateInvoiceComponent implements OnInit {
         this.selectedClient = this.clients[i];
       }
     }
-    console.log(this.selectedClient);
   }
 
   chooseClient() {
@@ -145,14 +148,49 @@ export class UpdateInvoiceComponent implements OnInit {
 
   updateExpireDate() {
     let docDate = new Date(this.invoice.docDate.getTime());
-    docDate.setDate(this.invoice.docDate.getDate() + 30);
+
+    docDate.setDate(
+      this.invoice.docDate.getDate() +
+        this.paymentMethods[this.invoice.paymentMethod]
+    );
     this.invoice.expireDate = new Date(docDate.getTime());
   }
 
-  updateLine() {}
+  updateLine() {
+    if (this.selectedLine!.id == -1) {
+      if (!this.selectedLine!.article) {
+        this.toastService.show('Er moet een product worden geselecteerd.', {
+          error: true,
+        });
+        return;
+      }
+      let newLine = { ...this.selectedLine! };
+      newLine.id = 0;
+      this.invoice.lines.push(newLine);
+      this.sortLines();
+    }
+
+    this.modalService.dismissAll('Save click');
+    this.selectedLine = null;
+  }
+
+  removeLine(order: number) {
+    this.invoice.lines = this.invoice.lines.filter(
+      (l) => l.orderInDocument != order
+    );
+    this.sortLines();
+
+    let newOrder = 0;
+    this.invoice.lines.forEach((l) => {
+      l.orderInDocument = newOrder++;
+    });
+  }
 
   copy(line: InvoiceLine) {
-    return { ...line };
+    let newLine = { ...line };
+    newLine.orderInDocument = this.invoice.lines.length;
+
+    return newLine;
   }
 
   calculateAmountExBtw(line: InvoiceLine) {
@@ -183,5 +221,81 @@ export class UpdateInvoiceComponent implements OnInit {
     });
 
     return subtotal;
+  }
+
+  updateProductForLine() {
+    if (this.selectedArticleId != -1) {
+      let article = this.articles.filter(
+        (a) => a.id === this.selectedArticleId
+      );
+
+      if (article && article.length > 0) {
+        this.selectedLine!.article = { ...article[0] };
+      }
+    } else {
+      this.selectedLine!.article = undefined;
+    }
+  }
+
+  moveDown(currentOrder: number) {
+    if (currentOrder == this.invoice.lines.length - 1) {
+      return;
+    }
+
+    this.invoice.lines.forEach((l) => {
+      if (l.orderInDocument == currentOrder) {
+        l.orderInDocument++;
+      } else if (l.orderInDocument == currentOrder + 1) {
+        l.orderInDocument--;
+      }
+    });
+
+    this.sortLines();
+  }
+
+  moveUp(currentOrder: number) {
+    if (currentOrder == 0) {
+      return;
+    }
+
+    this.invoice.lines.forEach((l) => {
+      if (l.orderInDocument == currentOrder) {
+        l.orderInDocument--;
+      } else if (l.orderInDocument == currentOrder - 1) {
+        l.orderInDocument++;
+      }
+    });
+
+    this.sortLines();
+  }
+
+  sortLines() {
+    this.invoice.lines.sort((a, b) => a.orderInDocument - b.orderInDocument);
+  }
+
+  updateInvoice() {
+    if (this.invoice.id == 'NIEUWE FCTR') {
+      let invoiceToSend = { ...this.invoice };
+      invoiceToSend.id = '0';
+      this.invoiceService.createInvoice(invoiceToSend).subscribe(
+        (data: Invoice) => {
+          this.router.navigate(['facturen/' + data.id]);
+          this.toastService.show('Factuur is opgeslagen.');
+        },
+        (err) => {
+          this.toastService.show(err.error.message, { error: true });
+        }
+      );
+    } else {
+      this.invoiceService.updateInvoice(this.invoice).subscribe(
+        (data: Invoice) => {
+          this.router.navigate(['facturen/' + data.id]);
+          this.toastService.show('Factuur is opgeslagen.');
+        },
+        (err) => {
+          this.toastService.show(err.error.message, { error: true });
+        }
+      );
+    }
   }
 }

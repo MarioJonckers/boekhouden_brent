@@ -28,12 +28,16 @@ public enum Salutation {
     private String name;
 
     public static Salutation convert(String salutationString) {
+        if (salutationString == null) {
+            throw new NullPointerException();
+        }
+
         for (Salutation salutation : Salutation.values()) {
             if (salutation.getName().equals(salutationString)) {
                 return salutation;
             }
         }
 
-        return null;
+        throw new IllegalArgumentException();
     }
 }

@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { SidebarMenuModule } from 'angular-sidebar-menu';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -30,7 +30,10 @@ import { ToastsContainer } from './toast/toast-container.component';
 import { UpdateArticleComponent } from './components/articles/update-article/update-article.component';
 import { InvoiceComponent } from './components/invoice/invoice.component';
 import { UpdateInvoiceComponent } from './components/invoice/update-invoice/update-invoice.component';
+import { registerLocaleData } from '@angular/common';
 
+import localeNl from '@angular/common/locales/nl';
+registerLocaleData(localeNl);
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,7 +63,7 @@ import { UpdateInvoiceComponent } from './components/invoice/update-invoice/upda
     NgbModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [{ provide: LOCALE_ID, useValue: 'nl' }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

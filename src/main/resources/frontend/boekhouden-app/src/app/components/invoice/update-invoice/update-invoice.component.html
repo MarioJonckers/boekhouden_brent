@@ -1,14 +1,31 @@
-<h4 class="text-center m-3 mb-4">Factuur</h4>
+<div class="row m-3 mb-4">
+  <div class="col-auto">
+    <button class="btn btn-info" [routerLink]="['/facturen']">
+      <i class="bi bi-arrow-left-circle"></i>
+    </button>
+  </div>
+  <div class="col">
+    <h4 class="text-center">Factuur</h4>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-danger ml-5">
+      <i class="bi bi-trash"></i>
+    </button>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-success" (click)="updateInvoice()">Opslaan</button>
+  </div>
+</div>
 
 <div class="row">
-  <div class="col-4">
-    <div class="row mb-5">
+  <div class="col-3">
+    <div class="row mb-3 pb-3 border-bottom border-1">
       <div class="col">
         <div class="row mb-3">
           <div class="col">
-            <h6 class="text-center">Klant</h6>
+            <h6 class="fw-bold text-center">Klant</h6>
           </div>
-          <div class="col">
+          <div class="col-auto">
             <button
               class="btn btn-sm btn-info"
               (click)="open(chooseClientModal)"
@@ -37,24 +54,46 @@
         </div>
       </div>
     </div>
-    <div class="row mb-5">
-      <div class="col">Notities + extra info</div>
+    <div class="mb-3 pb-3 border-bottom border-1">
+      <h6 class="fw-bold text-center">Notities</h6>
+      <div>
+        <textarea
+          name="notes"
+          rows="7"
+          class="form-control"
+          [(ngModel)]="invoice.notes"
+        ></textarea>
+      </div>
     </div>
     <div class="row">
       <div class="col">
-        <p class="fw-bold">Totalen</p>
-        <p>
-          <span class="fw-bold">Totaal ex. btw: </span>
-          {{ calculateTotalExBtw() | currency: "€ " }}
-        </p>
-        <p>
-          <span class="fw-bold">Btw: </span>
-          {{ calculateTotalInclBtw() - calculateTotalExBtw() | currency: "€ " }}
-        </p>
-        <p>
-          <span class="fw-bold">Totaal incl. btw: </span>
-          {{ calculateTotalInclBtw() | currency: "€ " }}
-        </p>
+        <h6 class="fw-bold text-center">Totalen</h6>
+        <div class="row">
+          <div class="col">
+            <h6 class="text-end">Totaal ex. btw:</h6>
+          </div>
+          <div class="col">
+            {{ calculateTotalExBtw() | currency: "€ " }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <h6 class="text-end">Btw:</h6>
+          </div>
+          <div class="col">
+            {{
+              calculateTotalInclBtw() - calculateTotalExBtw() | currency: "€ "
+            }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <h6 class="text-end">Totaal incl. btw:</h6>
+          </div>
+          <div class="col">
+            {{ calculateTotalInclBtw() | currency: "€ " }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -62,12 +101,7 @@
     <div class="row mb-3 pb-3 border-bottom border-1">
       <div class="col">
         <label class="form-label" for="dp">Factuur #</label>
-        <input
-          type="text"
-          disabled
-          [value]="'FACT-' + invoice.id"
-          class="form-control"
-        />
+        <input type="text" disabled [value]="invoice.id" class="form-control" />
       </div>
       <div class="col">
         <label class="form-label" for="dp">Factuur datum</label>
@@ -92,8 +126,14 @@
       </div>
       <div class="col">
         <label class="form-label" for="dp">Betaalwijze</label>
-        <select class="form-control">
-          <option>FCTR - 30 Dagen</option>
+        <select
+          class="form-control"
+          (change)="updateExpireDate()"
+          [(ngModel)]="invoice.paymentMethod"
+        >
+          <option value="FCTR_6">FCTR - 60 Dagen</option>
+          <option value="FCTR">FCTR - 30 Dagen</option>
+          <option value="FCT">FCTR - 15 Dagen</option>
         </select>
       </div>
       <div class="col">
@@ -119,75 +159,115 @@
         </div>
       </div>
     </div>
-    <div class="row header border-bottom border-1 pb-1 mb-3 fw-bold">
-      <div class="col">
+    <div
+      *ngIf="invoice.lines && invoice.lines.length > 0"
+      class="row header border-bottom border-1 pb-1 mb-3 fw-bold"
+    >
+      <div class="col-3">
         <p>Omschrijving</p>
-      </div>
-      <div class="col">
-        <p>Aantal</p>
       </div>
       <div class="col">
         <p>Prijs</p>
       </div>
       <div class="col">
+        <p>Aantal</p>
+      </div>
+      <div class="col">
         <p>Korting %</p>
       </div>
-      <div class="col">Bedrag ex. btw</div>
+      <div class="col">&euro; ex. btw</div>
       <div class="col">
         <p>Btw</p>
       </div>
+      <div class="col-2"></div>
     </div>
-    <div
-      class="row border-bottom border-1 mb-3"
-      *ngFor="let line of invoice.lines"
-    >
-      <div class="col">
-        <p>
-          <span *ngIf="line.customArticleDescription">{{
-            line.customArticleDescription
-          }}</span>
-          <span
-            *ngIf="!line.customArticleDescription && !line.article!.description"
+    <div *ngIf="invoice.lines && invoice.lines.length > 0" class="lines">
+      <div
+        class="row border-bottom border-1 mb-3"
+        *ngFor="let line of invoice.lines"
+      >
+        <div class="col-3">
+          <p class="m-0">
+            <span>
+              {{ line.article!.name }}
+            </span>
+          </p>
+          <p>
+            <span *ngIf="line.customArticleDescription">{{
+              line.customArticleDescription
+            }}</span>
+            <span
+              *ngIf="
+                !line.customArticleDescription && line.article!.description
+              "
+            >
+              {{ line.article!.description }}
+            </span>
+          </p>
+        </div>
+        <div class="col">
+          <p>
+            <span *ngIf="line.customArticlePrice">
+              {{ line.customArticlePrice | currency: "€ " }}
+            </span>
+            <span *ngIf="!line.customArticlePrice">
+              {{ line.article!.price | currency: "€ " }}
+            </span>
+          </p>
+        </div>
+        <div class="col">
+          <p>{{ line.amount }}&nbsp;({{ line.article!.unit }})</p>
+        </div>
+        <div class="col">
+          <p>
+            {{ line.discountPercentage / 100 | percent }}
+          </p>
+        </div>
+        <div class="col">
+          <p>
+            {{ calculateAmountExBtw(line) | currency: "€ " }}
+          </p>
+        </div>
+        <div class="col">
+          <p>
+            {{
+              calculateAmountExBtw(line) * (line.article!.btwPercentage / 100)
+                | currency: "€ "
+            }}
+          </p>
+        </div>
+        <div class="col-auto">
+          <button
+            class="btn py-0 px-1"
+            (click)="moveUp(line.orderInDocument)"
+            [disabled]="line.orderInDocument == 0"
           >
-            {{ line.article!.name }}
-          </span>
-          <span
-            *ngIf="!line.customArticleDescription && line.article!.description"
+            <i class="fs-4 bi bi-arrow-up-square"></i>
+          </button>
+          <button
+            class="btn py-0 px-1"
+            (click)="moveDown(line.orderInDocument)"
+            [disabled]="line.orderInDocument == invoice.lines.length - 1"
           >
-            {{ line.article!.description }}
-          </span>
-        </p>
-      </div>
-      <div class="col">
-        <p>{{ line.amount }}&nbsp;{{ line.article!.unit }}</p>
-      </div>
-      <div class="col">
-        <p>
-          <span *ngIf="line.customArticlePrice">
-            {{ line.customArticlePrice | currency: "€ " }}
-          </span>
-          <span *ngIf="!line.customArticlePrice">
-            {{ line.article!.price | currency: "€ " }}
-          </span>
-        </p>
-      </div>
-      <div class="col">
-        <p>
-          {{ line.discountPercentage / 100 | percent }}
-        </p>
-      </div>
-      <div class="col">
-        <p>
-          {{ calculateAmountExBtw(line) | currency: "€ " }}
-        </p>
-      </div>
-      <div class="col">
-        <p>
-          {{
-            calculateAmountExBtw(line) * (line.article!.btwPercentage / 100)
-              | currency: "€ "
-          }}
-        </p>
+            <i class="fs-4 bi bi-arrow-down-square"></i>
+          </button>
+          <button
+            class="btn py-0 px-1"
+            (click)="
+              selectedArticleId = line.article!.id;
+              selectedLine = line;
+              open(createLineModal)
+            "
+          >
+            <i class="fs-4 bi bi-pencil-square"></i>
+          </button>
+          <button
+            class="btn py-0 px-1"
+            (click)="removeLine(line.orderInDocument)"
+          >
+            <i class="fs-4 bi bi-trash text-danger"></i>
+          </button>
+        </div>
       </div>
     </div>
     <p
@@ -196,12 +276,16 @@
     >
       Nog geen lijnen
     </p>
-    <div class="row">
+    <div class="row mt-3 mb-0">
       <div class="col text-center">
         <button
           class="btn rounded-pill btn-success"
           title="lijn toevoegen"
-          (click)="selectedLine = copy(emptyLine); open(createLineModal)"
+          (click)="
+            selectedArticleId = -1;
+            selectedLine = copy(emptyLine);
+            open(createLineModal)
+          "
         >
           <i class="bi bi-plus"></i>
         </button>
@@ -218,17 +302,122 @@
       class="btn-close"
       aria-label="Close"
       (click)="modal.dismiss('Cross click')"
-    >
-      <i class="bi bi-x-lg"></i>
-    </button>
+    ></button>
   </div>
-  <div class="modal-body">iets toevoegen</div>
+  <div class="modal-body" *ngIf="selectedLine && selectedLine != null">
+    <div class="mb-3">
+      <label for="article" class="form-label">Product</label>
+      <select
+        name="article"
+        class="form-control"
+        [(ngModel)]="selectedArticleId"
+        (change)="updateProductForLine()"
+      >
+        <option [value]="-1" class="fst-italic">
+          Geen product geselecteerd
+        </option>
+        <option *ngFor="let product of articles" [value]="product.id">
+          {{ product.name }} - {{ product.price | currency: "€ " }}
+        </option>
+      </select>
+      <span *ngIf="selectedLine?.article">{{
+        selectedLine?.article?.description
+      }}</span>
+    </div>
+    <div class="mb-3 form-check form-switch p-0">
+      <div class="row w-100">
+        <div class="col">
+          <label for="customDescription" class="form-label">
+            Aangepaste omschrijving
+          </label>
+        </div>
+        <div class="col">
+          <input
+            type="checkbox"
+            [checked]="selectedLine!.customArticleDescription != null"
+            class="form-check-input"
+            role="switch"
+            (change)="
+              selectedLine!.customArticleDescription == null
+                ? (selectedLine!.customArticleDescription =
+                    selectedLine!.article!.description)
+                : (selectedLine!.customArticleDescription = null)
+            "
+          />
+        </div>
+      </div>
+      <textarea
+        name="customDescription"
+        class="form-control"
+        [(ngModel)]="selectedLine!.customArticleDescription"
+        rows="2"
+      ></textarea>
+    </div>
+    <div class="mb-3 form-check form-switch p-0">
+      <div class="row w-100">
+        <div class="col">
+          <label for="customPrice" class="form-label">Aangepaste prijs</label>
+        </div>
+        <div class="col">
+          <input
+            type="checkbox"
+            [checked]="selectedLine!.customArticlePrice != null"
+            class="form-check-input"
+            role="switch"
+            (change)="
+              selectedLine!.customArticlePrice == null
+                ? (selectedLine!.customArticlePrice =
+                    selectedLine!.article!.price)
+                : (selectedLine!.customArticlePrice = null)
+            "
+          />
+        </div>
+      </div>
+      <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">&euro;</span>
+        <input
+          type="number"
+          name="customPrice"
+          class="form-control"
+          min="0"
+          [disabled]="selectedLine!.customArticlePrice == null"
+          [(ngModel)]="selectedLine!.customArticlePrice"
+        />
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <div class="col">
+        <label class="form-label" for="amount">Aantal</label>
+        <div class="input-group">
+          <span class="input-group-text" id="basic-addon1">#</span>
+          <input
+            type="number"
+            name="amount"
+            min="0"
+            class="form-control"
+            [(ngModel)]="selectedLine!.amount"
+          />
+        </div>
+      </div>
+      <div class="col">
+        <label class="form-label" for="discount">Korting</label>
+        <div class="input-group">
+          <input
+            type="number"
+            name="discount"
+            class="form-control"
+            min="0"
+            max="100"
+            step="5"
+            [(ngModel)]="selectedLine!.discountPercentage"
+          />
+          <span class="input-group-text" id="basic-addon1">%</span>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline-dark"
-      (click)="updateLine(); modal.close('Save click')"
-    >
+    <button type="button" class="btn btn-outline-dark" (click)="updateLine()">
       Opslaan
     </button>
   </div>
@@ -237,7 +426,7 @@
 <!-- ChooseClient Modal -->
 <ng-template #chooseClientModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Nieuwe categorie</h4>
+    <h4 class="modal-title" id="modal-basic-title">Selecteer klant</h4>
     <button
       type="button"
       class="btn-close"

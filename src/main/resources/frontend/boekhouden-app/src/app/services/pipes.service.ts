@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { InvoiceLine } from '../classes/InvoiceLine';
 
 @Pipe({ name: 'pad' })
 export class Pad implements PipeTransform {
@@ -45,7 +46,7 @@ export class NumberArray implements PipeTransform {
 @Pipe({ name: 'sort' })
 export class SortArray implements PipeTransform {
   transform(items: any[], sortBy?: string): any[] {
-    return items.sort((a, b) => {
+    items.sort((a: any, b: any) => {
       if (sortBy) {
         if (typeof a[sortBy] === 'string') {
           return a[sortBy].localeCompare(b[sortBy]);
@@ -56,6 +57,7 @@ export class SortArray implements PipeTransform {
         return a - b;
       }
     });
+    return items;
   }
 }
 @Pipe({ name: 'trim' })

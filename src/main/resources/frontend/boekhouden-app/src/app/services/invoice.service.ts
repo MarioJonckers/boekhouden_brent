@@ -17,9 +17,17 @@ export class InvoiceService {
       .pipe(catchError((err) => throwError(err)));
   }
 
-  get(id: number): Observable<Invoice> {
+  get(id: string): Observable<Invoice> {
     return this.http
       .get<Invoice>(`${environment.apiUrl}/document/invoices/${id}`)
+      .pipe(catchError((err) => throwError(err)));
+  }
+
+  downloadInvoice(id: string): Observable<Blob> {
+    return this.http
+      .get(`${environment.apiUrl}/document/invoices/download/${id}`, {
+        responseType: 'blob',
+      })
       .pipe(catchError((err) => throwError(err)));
   }
 

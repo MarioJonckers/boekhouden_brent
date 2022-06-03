@@ -62,4 +62,24 @@ export class InvoiceComponent implements OnInit {
 
     return subtotal;
   }
+
+  printInvoice(id: string) {
+    this.invoiceService.downloadInvoice(id).subscribe(
+      (pdf) => {
+        const newBlob = new Blob([pdf], { type: 'application/pdf' });
+        const fileName = id + '.pdf';
+
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(newBlob, fileName);
+          return;
+        }
+
+        const data = window.URL.createObjectURL(newBlob);
+        window.open(data, '_blank');
+      },
+      (err) => {
+        this.toastService.show(err.error.message, { error: true });
+      }
+    );
+  }
 }

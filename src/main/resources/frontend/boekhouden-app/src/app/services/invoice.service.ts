@@ -42,4 +42,10 @@ export class InvoiceService {
       .put<Invoice>(`${environment.apiUrl}/document/invoices`, invoice)
       .pipe(catchError((err) => throwError(err)));
   }
+
+  togglePaid(id: string): Observable<void> {
+    return this.http
+      .put<void>(`${environment.apiUrl}/document/invoices/togglePaid/${id}`, null)
+      .pipe(catchError((err) => throwError(err)));
+  }
 }

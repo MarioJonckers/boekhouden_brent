@@ -21,6 +21,6 @@ public class ArticleLine extends Line {
 
     private double customArticlePrice;
 
-    private int amount;
+    private double amount;
     private int discountPercentage;
 }

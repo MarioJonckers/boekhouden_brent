@@ -19,7 +19,9 @@ public class Invoice extends Document {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
+    private boolean paid;
+
     public String getId() {
-        return "F-" + super.getId();
+        return "F-" + getDocDate().getYear() + super.getId();
     }
 }

@@ -26,7 +26,7 @@ public class DocumentController {
 
     @GetMapping("/invoices/{id}")
     public Invoice getInvoice(@PathVariable String id) {
-        return documentService.getInvoice(Long.valueOf(id.replace("F-", "")));
+        return documentService.getInvoice(Long.valueOf(id.substring(6)));
     }
 
     @PutMapping("/invoices")
@@ -41,12 +41,17 @@ public class DocumentController {
 
     @GetMapping("/invoices/download/{id}")
     public ResponseEntity<byte[]> downloadInvoice(@PathVariable String id) {
-        Invoice invoice = documentService.getInvoice(Long.valueOf(id.replace("F-", "")));
+        Invoice invoice = documentService.getInvoice(Long.valueOf(id.substring(6)));
         ByteArrayOutputStream byteArr = printService.downloadInvoice(invoice);
 
         return ResponseEntity
                 .ok()
                 .header("content-disposition", "attachment; filename=" + id + ".pdf")
                 .body(byteArr.toByteArray());
+    }
+
+    @PutMapping("/invoices/togglePaid/{id}")
+    public void togglePaid(@PathVariable String id) {
+        documentService.togglePaid(Long.valueOf(id.substring(6)));
     }
 }

@@ -67,12 +67,6 @@ export class InvoiceComponent implements OnInit {
     this.invoiceService.downloadInvoice(id).subscribe(
       (pdf) => {
         const newBlob = new Blob([pdf], { type: 'application/pdf' });
-        const fileName = id + '.pdf';
-
-        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-          window.navigator.msSaveOrOpenBlob(newBlob, fileName);
-          return;
-        }
 
         const data = window.URL.createObjectURL(newBlob);
         window.open(data, '_blank');
@@ -81,5 +75,11 @@ export class InvoiceComponent implements OnInit {
         this.toastService.show(err.error.message, { error: true });
       }
     );
+  }
+
+  togglePaid(invoice: Invoice) {
+    this.invoiceService.togglePaid(invoice.id).subscribe((data) => {
+       invoice.paid = !invoice.paid;
+    })
   }
 }

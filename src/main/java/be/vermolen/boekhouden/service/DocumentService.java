@@ -9,6 +9,7 @@ import be.vermolen.boekhouden.model.dto.LineDto;
 import be.vermolen.boekhouden.model.line.ArticleLine;
 import be.vermolen.boekhouden.model.line.Line;
 import be.vermolen.boekhouden.repository.InvoiceRepository;
+import be.vermolen.boekhouden.repository.LineRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class DocumentService {
 
     private final InvoiceRepository invoiceRepository;
     private final ClientService clientService;
+    private final LineRepository lineRepository;
 
     public List<Invoice> getAllInvoices() {
         return invoiceRepository.findAll();
@@ -58,9 +60,7 @@ public class DocumentService {
 
         if (original.getPaymentMethod().getDays() > 0) {
             original.setExpireDate(
-                    DateUtils.addDays(
-                            original.getDocDate(), original.getPaymentMethod().getDays()
-                    )
+                    original.getDocDate().plusDays(original.getPaymentMethod().getDays())
             );
         } else {
             original.setExpireDate(null);
@@ -78,6 +78,14 @@ public class DocumentService {
         original.setNotes(invoice.getNotes());
 
         original = invoiceRepository.save(original);
+
+        if (original.getLines() != null) {
+            for (Line line : original.getLines()) {
+                if (invoice.getLines().stream().noneMatch(l -> l.getId().equals(line.getId()))) {
+                    lineRepository.delete(line);
+                }
+            }
+        }
 
         ArrayList<Line> lines = new ArrayList<>();
         for (LineDto lineDto : invoice.getLines()) {
@@ -104,5 +112,11 @@ public class DocumentService {
         original.setLines(lines);
 
         return invoiceRepository.save(original);
+    }
+
+    public void togglePaid(Long invoiceId) {
+        Invoice invoice = getInvoice(invoiceId);
+        invoice.setPaid(!invoice.isPaid());
+        invoiceRepository.save(invoice);
     }
 }

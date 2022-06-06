@@ -31,7 +31,9 @@
   *ngFor="let invoice of invoices | sort: 'id'"
 >
   <div class="col">
-    <p>{{ invoice.id }}</p>
+    <a [routerLink]="['/facturen/' + invoice.id]">
+      <p>{{ invoice.id }}</p>
+    </a>
   </div>
   <div class="col">
     <p>{{ invoice.client?.name }}</p>
@@ -53,14 +55,20 @@
       <div class="col-auto">
         <button
           class="btn btn-info py-0 w-100"
-          [routerLink]="['/facturen/' + invoice.id]"
+          (click)="printInvoice(invoice.id)"
         >
-          <i class="bi bi-eye"></i>
+          <i class="bi bi-printer"></i>
         </button>
       </div>
       <div class="col-auto">
-        <button class="btn btn-info py-0 w-100" (click)="printInvoice(invoice.id)">
-          <i class="bi bi-printer"></i>
+        <button
+          class="btn py-0 w-100"
+          [class]="invoice.paid ? 'btn-success' : 'btn-danger'"
+          [title]="invoice.paid ? 'Is betaald' : 'Nog te betalen'"
+          (click)="togglePaid(invoice)"
+        >
+          <i *ngIf="invoice.paid" class="bi bi-check-square"></i>
+          <i *ngIf="!invoice.paid" class="bi bi-x-square"></i>
         </button>
       </div>
     </div>

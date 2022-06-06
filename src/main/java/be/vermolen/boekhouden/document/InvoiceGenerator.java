@@ -12,6 +12,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
 public class InvoiceGenerator extends PdfGenerator {
@@ -116,7 +117,7 @@ public class InvoiceGenerator extends PdfGenerator {
     }
 
     private void addGeneralInfoLine(Invoice invoice) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         addCellSpace(20);
 
@@ -160,13 +161,13 @@ public class InvoiceGenerator extends PdfGenerator {
         clientCodeCell.addElement(element);
         PdfPCell docDateCell = new PdfPCell();
         docDateCell.setColspan(3);
-        Paragraph element1 = new Paragraph(10, sdf.format(invoice.getDocDate()), defaultFont);
+        Paragraph element1 = new Paragraph(10, invoice.getDocDate().format(formatter), defaultFont);
         element1.setAlignment(Element.ALIGN_CENTER);
 
         docDateCell.addElement(element1);
         PdfPCell expDateCell = new PdfPCell();
         expDateCell.setColspan(3);
-        Paragraph element2 = new Paragraph(10, sdf.format(invoice.getExpireDate()), defaultFont);
+        Paragraph element2 = new Paragraph(10, invoice.getExpireDate().format(formatter), defaultFont);
         element2.setAlignment(Element.ALIGN_CENTER);
 
         expDateCell.addElement(element2);

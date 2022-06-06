@@ -96,6 +96,8 @@ export class UpdateClientComponent implements OnInit {
     console.log($event);
 
     if (cities.length == 1) {
+      console.log(cities[0]);
+
       this.client.city.city = cities[0].city;
       this.client.city.postalCode = cities[0].postalCode;
       this.client.city.country = cities[0].country;
@@ -110,6 +112,8 @@ export class UpdateClientComponent implements OnInit {
     );
 
     if (filteredCities.length == 1) {
+      console.log(filteredCities[0]);
+
       this.client.city.city = filteredCities[0].city;
       this.client.city.postalCode = filteredCities[0].postalCode;
       this.client.city.country = filteredCities[0].country;

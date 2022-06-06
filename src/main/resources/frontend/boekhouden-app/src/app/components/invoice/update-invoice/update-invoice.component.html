@@ -8,8 +8,8 @@
     <h4 class="text-center">Factuur</h4>
   </div>
   <div class="col-auto">
-    <button class="btn btn-danger ml-5">
-      <i class="bi bi-trash"></i>
+    <button *ngIf="invoice.id != 'NIEUWE FCTR'" class="btn btn-info ml-5" (click)="printInvoice()">
+      <i class="bi bi-printer"></i>
     </button>
   </div>
   <div class="col-auto">

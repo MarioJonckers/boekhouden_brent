@@ -11,6 +11,6 @@ public class LineDto {
     private int orderInDocument;
     private Article article;
     private double customArticlePrice;
-    private int amount;
+    private double amount;
     private int discountPercentage;
 }

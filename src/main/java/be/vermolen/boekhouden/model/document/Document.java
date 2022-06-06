@@ -3,11 +3,10 @@ package be.vermolen.boekhouden.model.document;
 import be.vermolen.boekhouden.model.Client;
 import be.vermolen.boekhouden.model.line.Line;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -23,14 +22,14 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date docDate;
-    private Date expireDate;
+    private LocalDate docDate;
+    private LocalDate expireDate;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "document", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
     @JsonIgnoreProperties(value = {"document"})
     private List<Line> lines;
 

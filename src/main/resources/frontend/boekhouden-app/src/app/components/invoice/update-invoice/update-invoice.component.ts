@@ -20,9 +20,11 @@ export class CustomAdapter extends NgbDateAdapter<Date> {
 
   fromModel(value: Date | null): NgbDateStruct | null {
     if (value) {
+      console.log(value);
+
       return {
         day: value.getDate(),
-        month: value.getMonth(),
+        month: value.getMonth() + 1,
         year: value.getFullYear(),
       };
     }
@@ -30,7 +32,11 @@ export class CustomAdapter extends NgbDateAdapter<Date> {
   }
 
   toModel(date: NgbDateStruct | null): Date | null {
-    return date ? new Date(date.year, date.month, date.day) : null;
+    console.log(date);
+
+    return date
+      ? new Date(date.year, date.month - 1, date.day, 2, 0, 0, 0)
+      : null;
   }
 }
 
@@ -64,6 +70,7 @@ export class UpdateInvoiceComponent implements OnInit {
     lines: [],
     notes: '',
     paymentMethod: 'FCTR',
+    paid: false,
   };
 
   paymentMethods: { [key: string]: number } = {
@@ -297,5 +304,19 @@ export class UpdateInvoiceComponent implements OnInit {
         }
       );
     }
+  }
+
+  printInvoice() {
+    this.invoiceService.downloadInvoice(this.invoice.id).subscribe(
+      (pdf) => {
+        const newBlob = new Blob([pdf], { type: 'application/pdf' });
+
+        const data = window.URL.createObjectURL(newBlob);
+        window.open(data, '_blank');
+      },
+      (err) => {
+        this.toastService.show(err.error.message, { error: true });
+      }
+    );
   }
 }

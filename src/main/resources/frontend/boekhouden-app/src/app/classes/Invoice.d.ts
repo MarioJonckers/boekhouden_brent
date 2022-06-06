@@ -1,5 +1,5 @@
-import { Client } from "./Client";
-import { InvoiceLine } from "./InvoiceLine";
+import { Client } from './Client';
+import { InvoiceLine } from './InvoiceLine';
 
 export class Invoice {
   id: string;
@@ -9,4 +9,5 @@ export class Invoice {
   lines: InvoiceLine[];
   paymentMethod: string;
   notes: string;
+  paid: boolean;
 }
